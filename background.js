@@ -1,6 +1,6 @@
 $(function() {
 
-	window.my_divvy_data = [];
+	window.my_bikeshare_data = [];
   var total_trips = 0;
   window.calculating = false;
   window.showing_sidebar = true;
@@ -26,7 +26,7 @@ $(function() {
   }
 
   // Scrape the trips info table
-  function scrapeDivvyData() {
+  function scrapeBikeshareData() {
     $('tbody').children().each(function() {
       row = $(this).children();
       var trip_id = row.eq(0).text();
@@ -36,40 +36,40 @@ $(function() {
       var end_date = row.eq(4).text();
       var duration = row.eq(5).text();
       var trip_data = { "trip_id" : trip_id, "start_station" : start_station, "start_date" : start_date, "end_station" : end_station, "end_date" : end_date, "duration" : duration };
-      window.my_divvy_data.push(trip_data);
+      window.my_bikeshare_data.push(trip_data);
     });
-    if (window.my_divvy_data.length > 1){
-      window.extra_unique_id = parseInt(window.my_divvy_data[window.my_divvy_data.length-1]["trip_id"].substr(3,5) + window.my_divvy_data[window.my_divvy_data.length-2]["trip_id"].substr(3,5) + window.my_divvy_data[window.my_divvy_data.length-3]["trip_id"].substr(3,5));
-    }else if (window.my_divvy_data.length == 1){
-      if (window.my_divvy_data[0].start_station!=""){
-        window.extra_unique_id = parseInt(window.my_divvy_data[0]["trip_id"].substr(3,4) + String(Math.random()).substr(2, 4)); //// CHECK THIS!!!
+    if (window.my_bikeshare_data.length > 1){
+      window.extra_unique_id = parseInt(window.my_bikeshare_data[window.my_bikeshare_data.length-1]["trip_id"].substr(3,5) + window.my_bikeshare_data[window.my_bikeshare_data.length-2]["trip_id"].substr(3,5) + window.my_bikeshare_data[window.my_bikeshare_data.length-3]["trip_id"].substr(3,5));
+    }else if (window.my_bikeshare_data.length == 1){
+      if (window.my_bikeshare_data[0].start_station!=""){
+        window.extra_unique_id = parseInt(window.my_bikeshare_data[0]["trip_id"].substr(3,4) + String(Math.random()).substr(2, 4)); //// CHECK THIS!!!
         window.one_trip_month = true;
       } else {
         window.zero_trips_month = true;
       }
     }
   }
-  scrapeDivvyData();
+  scrapeBikeshareData();
 
   function roundTenths(number) {
     return parseInt(number * 10) / 10
   }
 
-  // Create Divvybrags sidebar menu
-  content_html = "<br/><div id='divvybrags'>";
-  content_html += "<div id='toggle-divvybrags'>X</div><br/><br/>";
-  content_html += "<div id='divvybrags-body'>";
-  content_html += "<h2>DivvyBrags</h2><br/><br/>";
+  // Create bikesharebrags sidebar menu
+  content_html = "<br/><div id='bikesharebrags'>";
+  content_html += "<div id='toggle-bikesharebrags'>X</div><br/><br/>";
+  content_html += "<div id='bikesharebrags-body'>";
+  content_html += "<h2>BikeshareBrags</h2><br/><br/>";
   if (window.one_trip_month == false && window.zero_trips_month == false){
     var loader_img = chrome.extension.getURL("ajax-loader.gif");    // Loading gif animation
-    content_html += "<p id='calculate-my-milage' class='divvybrags-option'><img id='loading-gif' src='" + loader_img + "'>&nbsp;Calculating Mileage</p>";
+    content_html += "<p id='calculate-my-milage' class='bikesharebrags-option'><img id='loading-gif' src='" + loader_img + "'>&nbsp;Calculating Mileage</p>";
     content_html += "<p id='milage-note'></p>";
-    content_html += "<p id='brag-toggle' class='divvybrags-option'>Brag</p>";
+    content_html += "<p id='brag-toggle' class='bikesharebrags-option'>Brag</p>";
     content_html += "<p id='brag-area'></p>";
-    content_html += "<p id='make-chart' class='divvybrags-option'>Chart My Data</p>";
-    content_html += "<p id='download-csv' class='divvybrags-option'>Download as CSV</p>";
+    content_html += "<p id='make-chart' class='bikesharebrags-option'>Chart My Data</p>";
+    content_html += "<p id='download-csv' class='bikesharebrags-option'>Download as CSV</p>";
     content_html += "<p id='chart-making-status'></p>";
-    content_html += "<p id='leaderboard-toggle' class='divvybrags-option'>The Leaderboard</p>";
+    content_html += "<p id='leaderboard-toggle' class='bikesharebrags-option'>The Leaderboard</p>";
     content_html += "<p id='leaderboard'></p>";
   } else if (window.one_trip_month == true) {
     content_html += "<br/><br/><h5>You only took one trip this month.<br/><br/>Not much to brag about, honestly. </h5>";
@@ -99,7 +99,7 @@ $(function() {
 
   var station_distances_url = chrome.extension.getURL("station_distances_by_bicycle.csv");
 
-  // Pull in the big CSV of Divvy distances. Thanks Nick Bennett for building this! :)
+  // Pull in the big CSV of bikeshare distances. Thanks Nick Bennett for building this! :)
   $.ajax({
       type: "GET",
       url: station_distances_url,
@@ -109,7 +109,7 @@ $(function() {
         // Next we'll go retrieve the leaderboard
         $.ajax({
           type: "GET",
-          url: "http://divvybrags-leaderboard.herokuapp.com/entries.json?city=Chicago",
+          url: "http://bikesharebrags-leaderboard.herokuapp.com/entries.json?city=Chicago",
           success: function(data) {
             leaderboard_html = "";
             var leaderboard = data
@@ -138,10 +138,10 @@ $(function() {
       window.calculating = true;
       var loader_img = chrome.extension.getURL("ajax-loader.gif");              // Create loading gif animation
       $('#calculate-my-milage').append("<img id='loading-gif' src='" + loader_img + "'>");
-      for (var i = 0; i < window.my_divvy_data.length; i++) {
-        var csv_response = getMilageFromCSV(window.my_divvy_data[i], i);            // Check to see if the stations are in the CSV
+      for (var i = 0; i < window.my_bikeshare_data.length; i++) {
+        var csv_response = getMilageFromCSV(window.my_bikeshare_data[i], i);            // Check to see if the stations are in the CSV
         if (csv_response === false) {
-          google_response = getMilageFromGoogle(window.my_divvy_data[i], i);    // If not, ask Google for distances
+          google_response = getMilageFromGoogle(window.my_bikeshare_data[i], i);    // If not, ask Google for distances
           if (google_response === false) {
             handleNoMilageRow(i)                                                // If Google's clueless, no miles for you
           }
@@ -182,13 +182,13 @@ $(function() {
         var this_pair = window.lines[k];
         if (this_pair["start_station"] === start_station && this_pair["end_station"] === end_station) {
           var milage = parseFloat(this_pair["distance"] * 0.000621371);   // Distances in the CSV are stored as meters, so convert them to miles here
-          window.my_divvy_data[i]["milage"] = milage;
+          window.my_bikeshare_data[i]["milage"] = milage;
           window.total_milage += milage;
           window.trips_calculated += 1;
           window.match_found = true;
-          $('#milage-note').html(String(window.trips_calculated) + " out of " + String(window.my_divvy_data.length) + " trips calculated.");
-          // When there are no more trips to calculate, post the results in the notice area of the Divvybrags sidebar
-          if (trips_calculated === window.my_divvy_data.length) {
+          $('#milage-note').html(String(window.trips_calculated) + " out of " + String(window.my_bikeshare_data.length) + " trips calculated.");
+          // When there are no more trips to calculate, post the results in the notice area of the bikesharebrags sidebar
+          if (trips_calculated === window.my_bikeshare_data.length) {
             postResults(window.total_milage);
           }
         }
@@ -205,10 +205,10 @@ $(function() {
   }
 
   function handleNoMilageRow(i) {
-    window.my_divvy_data[i]["milage"] = 0;
+    window.my_bikeshare_data[i]["milage"] = 0;
     window.trips_calculated += 1;
-    $('#milage-note').html(String(window.trips_calculated) + " out of " + String(window.my_divvy_data.length) + " trips calculated.");
-    if (window.trips_calculated === window.my_divvy_data.length) {
+    $('#milage-note').html(String(window.trips_calculated) + " out of " + String(window.my_bikeshare_data.length) + " trips calculated.");
+    if (window.trips_calculated === window.my_bikeshare_data.length) {
       postResults(window.total_milage);
     }
   }
@@ -244,13 +244,13 @@ $(function() {
           } else {
             milage = parseFloat(response.replace(/\s/g, "").replace(/ft/g, "") / 5280);
           }
-          if (milage < 20) {                            // Sanity check in case Google wildly mis-reads the location of a Divvy station based on its name.
-            window.my_divvy_data[i]["milage"] = milage;
+          if (milage < 20) {                            // Sanity check in case Google wildly mis-reads the location of a bikeshare station based on its name.
+            window.my_bikeshare_data[i]["milage"] = milage;
             total_milage += milage;
             trips_calculated += 1;
-            $('#milage-note').html(String(trips_calculated) + " out of " + String(window.my_divvy_data.length) + " trips calculated.");
-            // When there are no more trips to calculate, post the results in the notice area of the Divvybrags sidebar
-            if (trips_calculated === window.my_divvy_data.length) {
+            $('#milage-note').html(String(trips_calculated) + " out of " + String(window.my_bikeshare_data.length) + " trips calculated.");
+            // When there are no more trips to calculate, post the results in the notice area of the bikesharebrags sidebar
+            if (trips_calculated === window.my_bikeshare_data.length) {
               postResults(total_milage);
             }
           } else {
@@ -277,7 +277,7 @@ $(function() {
   // Display milage results in the sidebar
   function postResults(total_milage) {
     window.total_milage = roundTenths(total_milage);
-    window.number_of_trips = window.my_divvy_data.length - window.small_trips;
+    window.number_of_trips = window.my_bikeshare_data.length - window.small_trips;
     window.total_hours = Math.floor(window.time_in_seconds/3600);
     window.remainder_minutes = Math.floor((window.time_in_seconds % 3600)/60);
     window.remainder_seconds = (window.time_in_seconds % 3600) % 60;
@@ -285,13 +285,13 @@ $(function() {
     if (window.small_trips > 0) {
       notice_area_html += "*"
     }
-    notice_area_html += "</p><p class='notice-area-text'>Time Divvying: " + window.total_hours + "h, " + window.remainder_minutes + "m, " + window.remainder_seconds + "s</p>";
+    notice_area_html += "</p><p class='notice-area-text'>Time Biking: " + window.total_hours + "h, " + window.remainder_minutes + "m, " + window.remainder_seconds + "s</p>";
     notice_area_html += "<p class='notice-area-text'>Approximate distance traveled: <span id='total-milage'>" + window.total_milage + "</span>mi</p>";
     $('#calculate-my-milage').html("My "+ window.this_month +" stats");
     $('#calculate-my-milage').attr("style","text-decoration: underline;");
     $('#calculate-my-milage').after(notice_area_html);
     if (window.small_trips > 0) {
-      var milage_note_html = "* There are " + window.my_divvy_data.length + " rows in your data table, but ";
+      var milage_note_html = "* There are " + window.my_bikeshare_data.length + " rows in your data table, but ";
       milage_note_html += window.small_trips + " of these are micro-trips under 60 seconds.";
       $('#milage-note').html(milage_note_html);
     }
@@ -344,8 +344,8 @@ $(function() {
     var last_cumulative_miles = 0;
     var milage_calculated = false;
 
-    for (var i = 0; i < window.my_divvy_data.length; i++) {
-      if (window.my_divvy_data[i]["milage"] !== undefined) {
+    for (var i = 0; i < window.my_bikeshare_data.length; i++) {
+      if (window.my_bikeshare_data[i]["milage"] !== undefined) {
         milage_calculated = true;
       }
     }
@@ -355,9 +355,9 @@ $(function() {
       return
     }
 
-    // Generating an array with all the dates between user's first Divvy ride and user's most recent Divvy ride
-    first_date = parseDate(window.my_divvy_data[window.my_divvy_data.length - 1]["start_date"]);
-    last_date = parseDate(window.my_divvy_data[0]["start_date"]);
+    // Generating an array with all the dates between user's first bikeshare ride and user's most recent bikeshare ride
+    first_date = parseDate(window.my_bikeshare_data[window.my_bikeshare_data.length - 1]["start_date"]);
+    last_date = parseDate(window.my_bikeshare_data[0]["start_date"]);
     date_array = getDates(first_date, last_date);
 
     function parseDate(aDate){
@@ -371,8 +371,8 @@ $(function() {
       milage_present = false;
 
       // Check to see if the user took bike rides on any given day. If so, add up miles
-      for (var i = 0; i < window.my_divvy_data.length; i++) {
-        trip = window.my_divvy_data[i];
+      for (var i = 0; i < window.my_bikeshare_data.length; i++) {
+        trip = window.my_bikeshare_data[i];
         this_trip_date = parseDate(trip["start_date"]);
         if (this_trip_date.getTime() === date_array[j].getTime()) {
           milage_present = true;
@@ -406,7 +406,7 @@ $(function() {
 
     $('#chart-area').highcharts({
         chart: { type: 'column' },
-        title: { text: 'Divvygraph' },
+        title: { text: 'Bikeshare Graph' },
         xAxis: {
           categories: formatted_dates,
           labels: { maxStaggerLines: 1, rotation: 315, step: number_of_steps }
@@ -443,7 +443,7 @@ $(function() {
   function downloadCSV() {
     var csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Trip ID,Start Station,Start Date,End Station,End Date,Duration,Approximate Mileage\n"
-    window.my_divvy_data.forEach(function(trip) {
+    window.my_bikeshare_data.forEach(function(trip) {
       csvContent += (trip["trip_id"] + "," + trip["start_station"] + "," + trip["start_date"] + "," + trip["end_station"] + "," + trip["end_date"] + "," + trip["duration"] + "," + trip["milage"] +"\n" );
     });
     var encodedUri = encodeURI(csvContent);
@@ -493,7 +493,7 @@ $(function() {
         var total_milage = window.total_milage;
         console.log ('total milage!: ' + total_milage);
         enter_leaderboard_name_html = "Enter your name as you'd like it to appear on the Leaderboard: <br/><input id='username-input' type='text' style='width: 140px'/>";
-        enter_leaderboard_name_html += "<br/><a id='post-it-name-status' class='divvybrags-option'><i>Post to Leaderboard</i></a>";
+        enter_leaderboard_name_html += "<br/><a id='post-it-name-status' class='bikesharebrags-option'><i>Post to Leaderboard</i></a>";
         $('#username-area').html(enter_leaderboard_name_html);
         $('#post-to-leaderboard').html("");
       });
@@ -522,14 +522,14 @@ $(function() {
        update_name_html +="<p>Would you like to <br/> choose a new name <br/><input id='username-input' type='text' value='"+user_name+"' style='width: 140px'/>" ;
        update_name_html += "<br/>or do you want to update your mileage";
        update_name_html += "with the name '" + user_name+"'?</p>";
-       update_name_html += "<br/><a id='post-it' class='divvybrags-option'><i>Post to Leaderboard</i></a>"
+       update_name_html += "<br/><a id='post-it' class='bikesharebrags-option'><i>Post to Leaderboard</i></a>"
       $('#username-area').html(update_name_html);
     }
   }
 
   function checkLeaderboardForName(){
     var user_name = $('#username-input').val();
-    var leaderboard_array = $('div#divvybrags p#leaderboard').children();
+    var leaderboard_array = $('div#bikesharebrags p#leaderboard').children();
     var this_month_and_year = this_month + " " + this_year;
     var month_leaderboard_text = " " ;
     var yes_read = false;
@@ -589,7 +589,7 @@ $(function() {
     $.ajax({
       type: "POST",
       url: "http://divvybrags-leaderboard.herokuapp.com/new_entry",
-      data: { leaderboard_post: {update_status: name_status, name: user_name, miles: total_milage, city: "Chicago", month: window.this_month, year: window.this_year  } },
+      data: { leaderboard_post: {update_status: name_status, name: user_name, miles: total_milage, city: "DC", month: window.this_month, year: window.this_year  } },
       success: function(data) {
         leaderboard_html = "";
         var leaderboard = data["leaderboard"];
