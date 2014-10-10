@@ -1,0 +1,72 @@
+#divvybrags {
+  width: 240px; 
+  height: 100%; 
+  position: absolute; 
+  right: 0; 
+  top: 0;
+  background-color: #1c9bca;
+  color: white;
+  z-index: 1;
+  overflow: hidden;
+  } 
+
+#divvybrags h2 {
+  text-align: center;
+  }
+
+#toggle-divvybrags {
+  float: right; 
+  margin-right: 8px;
+  margin-top: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  }
+
+#divvybrags p {
+  text-align: center;
+  width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+.divvybrags-option {
+  font-size: 18px;
+  color: white; 
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+  padding: 10px;
+  }
+
+.divvybrags-option:hover {
+  text-decoration: underline;
+  color: #136787;
+  } 
+
+.bragging-type-option {
+  font-size: 16px;
+  color: white; 
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+  }
+
+.bragging-type-option:hover {
+  text-decoration: underline;
+  color: #136787;
+  } 
+
+#notice-area {
+  text-align: center;
+  }
+
+.notice-area-text {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  }
+  
+.my-leaderboard-entry {
+  font-size: 22px;
+  font-weight: bold;
+}
