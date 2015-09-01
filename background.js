@@ -1,4 +1,4 @@
-$(function() {
+ed-table__items$(function() {
 
 	window.my_bikeshare_data = [];
   var total_trips = 0;
@@ -27,7 +27,7 @@ $(function() {
 
   // Scrape the trips info table
   function scrapeBikeshareData() {
-    $('tbody').children().each(function() {
+    $('ed-table__items').children().each(function() {
       row = $(this).children();
       var trip_id = row.eq(0).text();
       var start_station = row.eq(1).text();

@@ -11,7 +11,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://www.capitalbikeshare.com/member/rentals"],
+      "matches": ["https://secure.capitalbikeshare.com/profile/trips"],
       "js": [
         "jquery.js",
         "highcharts.js",
