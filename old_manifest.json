@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "CaBiBrags",
+  "name": "CapitalBikeshareBrags",
   "description": "Liberate your bikeshare data.",
   "version": "1.0.1",
 
@@ -19,16 +19,6 @@
         "background.js"
       ],
       "css": ["background.css"]
-    },
-    {
-      "matches": ["https://secure.capitalbikeshare.com/profile/"],
-      "js": [
-        "jquery.js",
-        "highcharts.js",
-        "jquery.livequery.js",
-        "cabihome.js"
-      ],
-      "css": ["background.css"]
     }
   ],
 
@@ -40,12 +30,14 @@
     "background.css",
     "ajax-loader.gif",
     "twitter_logo_white.png",
-    "star_icon_white.png"
+    "star_icon_white.png",
+    "api_key.json"
   ],
 
   "permissions": [
-    "https://shielded-coast-7617.herokuapp.com/",
-    "storage"
+    /*"http://divvybrags-leaderboard.herokuapp.com/",
+    "https://maps.googleapis.com/maps/api/distancematrix/json",
+    "storage"*/
   ]
 
 }
