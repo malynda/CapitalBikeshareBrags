@@ -10,8 +10,9 @@
   overflow: hidden;
   }
 
-#bikesharebrags h2 {
+#bikesharebrags h1 {
   text-align: center;
+  color: yellow;
   }
 
 #toggle-bikesharebrags {
@@ -40,7 +41,7 @@
 
 .bikesharebrags-option:hover {
   text-decoration: underline;
-  color: #136787;
+  color: yellow;
   }
 
 .bragging-type-option {

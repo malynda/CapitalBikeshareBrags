@@ -37,7 +37,7 @@ $(function() {
   content_html += "<br/><div id='bikesharebrags'>";
   content_html += "<div id='toggle-bikesharebrags'>X</div><br/><br/>";
   content_html += "<div id='bikesharebrags-body'>";
-  content_html += "<h2>CaBiBrags</h2><br/><br/>";
+  content_html += "<h1>CaBiBrags</h1><br/><br/>";
   // if (window.one_trip_month == false && window.zero_trips_month == false){
     var loader_img = chrome.extension.getURL("ajax-loader.gif");    // Loading gif animation
      content_html += "<p id='calculate-my-milage' class='bikesharebrags-option'>Get Mileage for Bragging</p>";
@@ -87,7 +87,7 @@ populate_leaderboard();
    function calculateMyMilage() {
 			postResults();
    };
-
+	calculateMyMilage();
 
   function handleNoMilageRow(i) {
     window.my_bikeshare_data[i]["milage"] = 0;
