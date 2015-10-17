@@ -3,7 +3,7 @@
 
   "name": "CaBiBrags",
   "description": "Liberate your bikeshare data.",
-  "version": "1.0.3",
+  "version": "1.0.4",
 
   "icons": {
     "48": "icon48.png"
@@ -14,9 +14,18 @@
       "matches": ["https://secure.capitalbikeshare.com/profile/"],
       "js": [
         "jquery.js",
-        "highcharts.js",
         "jquery.livequery.js",
         "cabihome.js"
+      ],
+      "css": ["background.css"]
+    },
+    {
+      "matches": ["https://secure.capitalbikeshare.com/profile/trips/*"],
+      "js": [
+        "jquery.js",
+        "highcharts.js",
+        "jquery.livequery.js",
+        "cabigraph.js"
       ],
       "css": ["background.css"]
     }

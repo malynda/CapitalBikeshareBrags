@@ -189,13 +189,13 @@ populate_leaderboard();
     });
   });
 
-
+// Check if username already exists, ask if it belongs to user or if they want to choose a new name
   function checkName(user_name){
     var leaderboard_text = $('div#bikesharebrags p#leaderboard').text();
     var yes_read = false;
     var br_flag = false;
-
-		if (leaderboard_text.indexOf(user_name)!= -1){
+		var uname = " " + user_name + ": ";
+		if (leaderboard_text.indexOf(uname)!= -1){
 			if (confirm('This username has already been added to the leaderboard. \n If this is your username and you want to update your mileage, click "Cancel" \n If you want to change this username, click "OK"')) {
 				var new_name = prompt("Please enter a new username", "");
 				$('#username-input').val(new_name);
