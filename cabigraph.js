@@ -29,8 +29,6 @@ $(function() {
 	var counter = 0;
   // Scrape the trips info table
   function scrapeBikeshareData() {
-		console.log ("hey, scrape function is called!");
-
 		var numRecords = $('.ed-table__item').length;
 		for (i = 0; i < numRecords / 2; i += 1)
 		{
@@ -72,15 +70,15 @@ $(function() {
     //   var trip_data = { "trip_id" : trip_id, "start_station" : start_station, "start_date" : start_date, "end_station" : end_station, "end_date" : end_date, "duration" : duration };
     //   window.my_bikeshare_data.push(trip_data);
     //  });
-    // if (window.my_bikeshare_data.length > 1){
+    if (window.my_bikeshare_data.length > 1){
     //   window.extra_unique_id = parseInt(window.my_bikeshare_data[window.my_bikeshare_data.length-1]["trip_id"].substr(3,5) + window.my_bikeshare_data[window.my_bikeshare_data.length-2]["trip_id"].substr(3,5) + window.my_bikeshare_data[window.my_bikeshare_data.length-3]["trip_id"].substr(3,5));
-    // }else if (window.my_bikeshare_data.length == 1){
+    }else if (window.my_bikeshare_data.length == 1){
     //   if (window.my_bikeshare_data[0].start_station!=""){
     //     window.extra_unique_id = parseInt(window.my_bikeshare_data[0]["trip_id"].substr(3,4) + String(Math.random()).substr(2, 4)); //// CHECK THIS!!!
-    //     window.one_trip_month = true;
-    //   } else {
-    //     window.zero_trips_month = true;
-    //   }
+        window.one_trip_month = true;
+      } else {
+        window.zero_trips_month = true;
+      }
     // }
   }
   scrapeBikeshareData();
@@ -94,23 +92,24 @@ $(function() {
   content_html += "<div id='toggle-bikesharebrags'>X</div><br/><br/>";
   content_html += "<div id='bikesharebrags-body'>";
   content_html += "<h1>CaBiBrags</h1><br/><br/>";
-  // if (window.one_trip_month == false && window.zero_trips_month == false){
+  if (window.one_trip_month == false && window.zero_trips_month == false){
     // var loader_img = chrome.extension.getURL("ajax-loader.gif");    // Loading gif animation
     // content_html += "<p id='calculate-my-mileage' class='bikesharebrags-option'><img id='loading-gif' src='" + loader_img + "'>&nbsp;Calculating Mileage</p>";
     content_html += "<p id='mileage-note'></p>";
     // content_html += "<p id='brag-toggle' class='bikesharebrags-option'>Brag</p>";
     // content_html += "<p id='brag-area'></p>";
     content_html += "<p id='make-chart' class='bikesharebrags-option'>Chart My Data</p>";
+		content_html += "<p id='chart-making-status'></p>";
     content_html += "<p id='download-csv' class='bikesharebrags-option'>Download as CSV</p>";
-    content_html += "<p id='chart-making-status'></p>";
+
     content_html += "<p id='leaderboard-toggle' class='bikesharebrags-option'>The Leaderboard</p>";
     content_html += "<p id='leaderboard'></p>";
-  // } else if (window.one_trip_month == true) {
-    // content_html += "<br/><br/><h5>You only took one trip this month.<br/><br/>Not much to brag about, honestly. </h5>";
-  // } else if (window.zero_trips_month == true){
-    // content_html += "<br/><br/><h5>You didn't take any trips this month.</h5>";
-    // content_html += "<br/><br/><br/><h2 style ='font-size: 50px'>&#9785;</h2>"; //sad face
-  // }
+  } else if (window.one_trip_month == true) {
+    content_html += "<br/><br/><h5>You only took one trip?.<br/><br/>Not much to graph here, honestly. </h5>";
+  } else if (window.zero_trips_month == true){
+    content_html += "<br/><br/><h5>You haven't taken any trips yet?.</h5>";
+    content_html += "<br/><br/><br/><h2 style ='font-size: 50px'>&#9785;</h2>"; //sad face
+  }
   content_html += "</div></div>";
 
   $('#contentContainer').after(content_html);
@@ -119,6 +118,8 @@ $(function() {
 
   window.total_mileage = 0;
   window.trips_calculated = 0;
+
+	addMileageForGraph();
 
   // function checkUserID() {
   //   chrome.storage.sync.get('extra_unique_id', function(result) {
@@ -184,59 +185,21 @@ $(function() {
   //   }
   // };
 
-  // function getmileageFromCSV(trip, i) {
-  //   var start_station = trip["start_station"];
-  //   var end_station = trip["end_station"];
-	//
-  //   // Extracting + parsing info about trip durations
-  //   var duration = trip["duration"].split(" ");
-  //   for (var j = 0; j < duration.length; j++) {
-  //     var this_trip_seconds = 0;
-  //     if (duration[j].indexOf("s") !== -1) {
-  //       var seconds = parseInt($.trim(duration[j]).substring(0, $.trim(duration[j]).length - 1));
-  //       this_trip_seconds += seconds
-  //       window.time_in_seconds += seconds
-  //     }
-  //     if (duration[j].indexOf("m") !== -1) {
-  //       var minutes = parseInt($.trim(duration[j]).substring(0, $.trim(duration[j]).length - 1)) * 60;
-  //       this_trip_seconds += minutes
-  //       window.time_in_seconds += minutes
-  //     }
-  //     if (duration[j].indexOf("h") !== -1) {
-  //       var hours = parseInt($.trim(duration[j]).substring(0, $.trim(duration[j]).length - 1)) * 3600;
-  //       this_trip_seconds += hours
-  //       window.time_in_seconds += hours
-  //     }
-  //   }
-	//
-  //   // Extracting + parsing info about distance
-  //   if (start_station !== end_station) {
-  //     window.match_found = false;
-  //     for (k = 0; k < window.lines.length; k++) {
-  //       var this_pair = window.lines[k];
-  //       if (this_pair["start_station"] === start_station && this_pair["end_station"] === end_station) {
-  //         var mileage = parseFloat(this_pair["distance"] * 0.000621371);   // Distances in the CSV are stored as meters, so convert them to miles here
-  //         window.my_bikeshare_data[i]["mileage"] = mileage;
-  //         window.total_mileage += mileage;
-  //         window.trips_calculated += 1;
-  //         window.match_found = true;
-  //         $('#mileage-note').html(String(window.trips_calculated) + " out of " + String(window.my_bikeshare_data.length) + " trips calculated.");
+
+	function addMileageForGraph(){
+					var mileage = 0;
+      for (k = 0; k < window.my_bikeshare_data.length; k++) {
+          mileage += window.my_bikeshare_data[i]["distance"];   // Distances in the CSV are stored as meters, so convert them to miles here
+          window.my_bikeshare_data[i]["mileage"] = mileage;
+          window.total_mileage += mileage;
+          window.trips_calculated += 1;
+				}
   //         // When there are no more trips to calculate, post the results in the notice area of the bikesharebrags sidebar
-  //         if (trips_calculated === window.my_bikeshare_data.length) {
-  //           postResults(window.total_mileage);
-  //         }
-  //       }
-  //     }
-  //     if (window.match_found === false) {
-  //       return false          // Pass to Google Distance API since these station names aren't in the CSV file
-  //     }
-  //   } else {
-  //     if (this_trip_seconds < 60) {
-  //       window.small_trips += 1       // If the trip is under one minute and the start/end stations are the same, it's a "small trip"
-  //     }
-  //     handleNomileageRow(i)    // No mileage for this trip if the start station is the same as the end station
-  //   }
-  // }
+          if (trips_calculated === window.my_bikeshare_data.length) {
+            postResults(window.total_mileage);
+          }
+}
+
 
   function handleNomileageRow(i) {
     window.my_bikeshare_data[i]["mileage"] = 0;
@@ -330,6 +293,7 @@ $(function() {
       $('#mileage-note').html(mileage_note_html);
     }
     $('#loading-gif').remove();
+
     window.mileage_calculated = true;
     makeChart();        // Create the chart when we post results!
   }
