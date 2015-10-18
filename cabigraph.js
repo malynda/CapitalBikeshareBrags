@@ -35,7 +35,7 @@ $(function() {
 			var distance = $('.ed-table__item__info_trip-distance')[i].innerText;
 			distance = distance.replace("Distance ", "").replace("miles", "");
 			distance = parseInt(distance);
-			var trip_data = {"start_date" : start_date, "end_date" : end_date, "duration" : duration, "distance" : distance};
+			var trip_data = {"start_station": start_station,"start_date" : start_date, "end_station": end_station, "end_date" : end_date, "duration" : duration, "distance" : distance};
 			window.my_bikeshare_data.push(trip_data);
 		}
 
